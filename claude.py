@@ -275,23 +275,43 @@ def clear_screen() -> None:
 def menu() -> None:
     """Display the main menu"""
     clear_screen()
-    print(f"{ORANGE}=" * 57)
-    print("\t\tClaude In The Console")
-    print("=" * 57 + RESET)
-    print("\t\t\tCommands:")
-    print("  - 'scrape [url]' to retrieve information from a website")
-    print("  - 'settings' or 'config' to change settings")
-    print("  - 'clear' or 'cls' to clear the screen")
-    print("  - 'cd' to view the current directory")
-    print("  - 'menu', 'help', or 'cmd' to show this menu")
-    print("  - 'read' to read a file and ask a question")
-    print("  - 'save [filename]' to save the conversation")
-    print("  - 'load [filename]' to load a conversation")
-    print("  - 'memory' to view message memory size")
-    print("  - 'reset' to clear message memory")
-    print("  - 'test' to create and run a test Python script")
-    print("  - 'exit', 'quit', or 'bye' to exit")
-    print(f"{ORANGE}=" * 57 + RESET)
+
+    # Get terminal width (fallback to 80 if can't determine)
+    try:
+        terminal_width = os.get_terminal_size().columns
+    except:
+        terminal_width = 80
+
+    print(f"{ORANGE}" + "=" * terminal_width)
+    print("Claude In The Console".center(terminal_width))
+    print("=" * terminal_width + RESET)
+
+    # Center "Commands:"
+    print("Commands:".center(terminal_width))
+
+    commands = [
+        "- 'scrape [url]' to retrieve information from a website",
+        "- 'read [filename] [question]' to read a file and ask about it",
+        "- 'save [filename]' to save the conversation",
+        "- 'load [filename]' to load a saved conversation",
+        "- 'settings' or 'config' to change model, prompt or speed",
+        "- 'memory' or 'mem' to view message memory size",
+        "- 'reset' to clear message memory",
+        "- 'test' or 'testfile' to create and analyze a file",
+        "- 'clear' or 'cls' to clear the screen",
+        "- 'cd' to view the current directory",
+        "- 'menu', 'help', or 'cmd' to show this menu",
+        "- 'exit', 'quit', or 'bye' to exit"
+    ]
+
+    # Calculate left padding to center the commands
+    max_command_length = max(len(cmd) for cmd in commands)
+    left_padding = (terminal_width - max_command_length) // 2
+
+    for cmd in commands:
+        print(" " * left_padding + cmd)
+
+    print(f"{ORANGE}" + "=" * terminal_width + RESET)
 
 async def handle_read_file(filename=None, question=None) -> None:
     """Handle the read file command with optional parameters"""
