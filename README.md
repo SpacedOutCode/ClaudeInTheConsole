@@ -25,7 +25,7 @@ A terminal-based interface for interacting with Claude AI models.
 
 1. Clone the repository:
    ```
-   git clone https://github.com/spacedoucode/claudeintheconsole.git
+   git clone https://github.com/spacedoutcode/claudeintheconsole.git
    cd claude-console
    ```
 
