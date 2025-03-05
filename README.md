@@ -25,7 +25,7 @@ A terminal-based interface for interacting with Claude AI models.
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/claude-console.git
+   git clone https://github.com/spacedoucode/claudeintheconsole.git
    cd claude-console
    ```
 
@@ -40,14 +40,14 @@ A terminal-based interface for interacting with Claude AI models.
    export ANTHROPIC_API_KEY="your-api-key"
 
    # For Windows
-   set ANTHROPIC_API_KEY=your-api-key
+   setx ANTHROPIC_API_KEY=your-api-key
    ```
 
 ## Usage
 
 Run the application:
 ```
-python claude.py
+py claude.py
 ```
 
 ### Commands
@@ -57,7 +57,7 @@ python claude.py
 - `clear` or `cls` - Clear the screen
 - `cd` - View the current directory
 - `menu`, `help`, or `cmd` - Show the command menu
-- `read` - Read a file and ask a question about it
+- `read [filename] "question"` - Read a file and ask a question about it
 - `save [filename]` - Save the conversation
 - `load [filename]` - Load a saved conversation
 - `memory` or `mem` - View message memory size
