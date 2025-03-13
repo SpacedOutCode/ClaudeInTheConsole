@@ -161,13 +161,13 @@ def scrape_website(url: str) -> str:
         logging.error(f"Error scraping website: {str(e)}")
         return f"Error scraping website: {str(e)}"
 
-def extract_code_from_response(response_text: str) -> Optional[str]:
+def extract_code_from_response(response_text: str) -> Optional[list]:
     """Extract code from a response containing markdown code blocks"""
-    if "`" + "``" not in response_text:
+    if "```" not in response_text:
         return None
 
     # Extract code between first pair of ``` markers
-    parts = response_text.split("`" + "``", 2)
+    parts = response_text.split("```", 2)
     if len(parts) < 3:
         return None
 
@@ -179,9 +179,49 @@ def extract_code_from_response(response_text: str) -> Optional[str]:
         if len(lines) > 1 and lines[0].strip():
             language = lines[0].strip()  # Check if first line has content (language identifier)
             return [lines[1], language]
-        return code_block
+        return [code_block, ""]
 
-    return code_block
+    return [code_block, ""]
+
+def determine_file_extension(language: str) -> str:
+    """Determine file extension based on language identifier"""
+    language = language.lower().strip()
+
+    extensions = {
+        "python": ".py",
+        "py": ".py",
+        "javascript": ".js",
+        "js": ".js",
+        "typescript": ".ts",
+        "ts": ".ts",
+        "html": ".html",
+        "css": ".css",
+        "java": ".java",
+        "c": ".c",
+        "cpp": ".cpp",
+        "c++": ".cpp",
+        "csharp": ".cs",
+        "cs": ".cs",
+        "php": ".php",
+        "ruby": ".rb",
+        "rb": ".rb",
+        "go": ".go",
+        "rust": ".rs",
+        "swift": ".swift",
+        "kotlin": ".kt",
+        "sql": ".sql",
+        "sh": ".sh",
+        "bash": ".sh",
+        "shell": ".sh",
+        "json": ".json",
+        "xml": ".xml",
+        "yaml": ".yml",
+        "yml": ".yml",
+        "markdown": ".md",
+        "md": ".md",
+    }
+
+    return extensions.get(language, ".txt")
 
 def save_conversation(filename: str = None) -> None:
     """Save the current conversation to a file"""
@@ -480,22 +520,32 @@ async def main() -> None:
 
                 # Check for code blocks and offer to save them
                 if "`" + "``" in response_text:
-                    code = extract_code_from_response(response_text)
-                    if code:
+                    code_data = extract_code_from_response(response_text)
+                    if code_data:
                         write_choice = input(f"{BLUE}System>> {RESET}Detected code block in response. Do you want to write it to a file? (y/n): ")
-
+                
                         if write_choice.lower() == "y":
-                            new_filename = input(f"{BLUE}System>> {RESET}What would you like to name the file? ")
-
-                            if os.path.splitext(new_filename)[1] == "":
-                                new_filename += ".py"  # Add .py extension only if no extension exists
-
+                            # Determine file extension
+                            code_content, language = code_data
+                            file_extension = determine_file_extension(language)
+                            default_filename = f"new_file{file_extension}"
+                
+                            print(f"{BLUE}System>> {RESET}Default filename: {default_filename}")
+                            rename_choice = input(f"{BLUE}System>> {RESET}Do you want to rename the file? (y/n): ")
+                
+                            if rename_choice.lower() == "y":
+                                custom_filename = input(f"{BLUE}System>> {RESET}Enter new filename (without extension): ")
+                                # Ensure the extension stays the same
+                                new_filename = f"{custom_filename}{file_extension}"
+                            else:
+                                new_filename = default_filename
+                
                             with open(new_filename, "w", encoding="utf-8") as f:
-                                f.write(code)
+                                f.write(code_content)
                             print(f"{BLUE}System>> {RESET}{new_filename} created.")
-
+                
                             # Ask about running the file if it's a Python file
-                            if new_filename.endswith(".py"):
+                            if file_extension == ".py":
                                 run_choice = input(f"{BLUE}System>> {RESET}Would you like to run {new_filename}? (y/n): ")
                                 if run_choice.lower() == "y":
                                     print(f"{BLUE}System>> {RESET}Running {new_filename}...")
