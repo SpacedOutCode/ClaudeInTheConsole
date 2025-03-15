@@ -83,9 +83,7 @@ Claude>> Hello! How can I assist you today?
 User>> scrape wikipedia.org
 Claude>> [Information about Wikipedia...]
 
-User>> read
-System>> Enter the filename: mycode.py
-User>> What does this code do?
+User>> read mycode.py "What does this code do?"
 Claude>> [Explanation of the code...]
 
 User>> save my_conversation
